@@ -25,12 +25,12 @@
 #undef	UART				//	undefined = no UART messages
 
 #define STANDBY 0
-#define RETRANSMISSION	1	//	[FEATURE]
-#define WTX	2				//	[FEATURE]
+#define RETRANSMISSION	1		//	[FEATURE]
+#define WTX	2			//	[FEATURE]
 #define RUID	3			//	[FEATURE]
 #define PUPI_SPLIT	4		//	[FEATURE]
 #define READ_RF 5			//	[DEBUG]
-#define	READ_SEND_RF 6		//	[DEBUG]
+#define	READ_SEND_RF 6			//	[DEBUG]
 #define SEND_RF	7			//	[DEBUG]
 
 
@@ -38,17 +38,17 @@ int main()
 {
 	//Declaration
 	XIOModule io_module;
-	unsigned char rx_buf[100];						//	RX Buffer array, used for all* read operations
+	unsigned char rx_buf[100];					//	RX Buffer array, used for all* read operations
 	unsigned char tx_buf[1] = {0xAA};				//	TX Buffer array, used for [DEBUG] TX operations
-	unsigned char deselect[3] = {0xC2, 0xE0, 0xB4};	//	Fixed deselect message
-	unsigned char ruid[100];						//	Buffer for RUID handling
-	unsigned char rpupi[100];						//	Buffer for RUID handling
-	unsigned int len;								//	Length variable, commonly re-used
-	unsigned int len_op;							//	Opcode payload length variable, only written at the beginning
-	unsigned int opcode;							// 	Opcode variable, used for statemachine selection
+	unsigned char deselect[3] = {0xC2, 0xE0, 0xB4};			//	Fixed deselect message
+	unsigned char ruid[100];					//	Buffer for RUID handling
+	unsigned char rpupi[100];					//	Buffer for RUID handling
+	unsigned int len;						//	Length variable, commonly re-used
+	unsigned int len_op;						//	Opcode payload length variable, only written at the beginning
+	unsigned int opcode;						// 	Opcode variable, used for statemachine selection
 	unsigned int loop_limit = 1;					//	Limit for consecutive execution
 	unsigned int loop_count = 0;					//	Counter for consecutive execution
-	unsigned int loop_done = 0;						//  Indicator for premature loop break-out
+	unsigned int loop_done = 0;					//  Indicator for premature loop break-out
 	unsigned char tx_config = 0x00;					//	Config byte for TX operations
 
 	//Initialization
@@ -77,7 +77,7 @@ int main()
 			switch(opcode)
 			{
 /*******************************************************************************************************************************************************************************/
-				case RETRANSMISSION: 		//	When opcode == 1 -> PCD retransmission handling [PCD TC FEATURE]
+				case RETRANSMISSION: 		//When opcode == 1 -> PCD retransmission handling [PCD TC FEATURE]
 					tx_config = 0x01;	//Set TX config to: HEX:1 | CRC:0 | BCC:0
 					//while loop for consecutive Retransmission requests
 					while ((loop_count < loop_limit) && (loop_done == 0))
@@ -115,7 +115,7 @@ int main()
 					}
 					break;
 /*******************************************************************************************************************************************************************************/
-				case WTX: 					//	When opcode == 2 -> PICC WTX handling [PICC TC FEATURE]
+				case WTX: 					//When opcode == 2 -> PICC WTX handling [PICC TC FEATURE]
 					tx_config = 0x03;	//Set TX config to: HEX:1 | CRC:0 | BCC:0
 					//while loop for consecutive WTX requests
 					while ((loop_count <= loop_limit) && (loop_done == 0))
@@ -176,7 +176,7 @@ int main()
 					}
 					break;
 /*******************************************************************************************************************************************************************************/
-				case RUID:					//	When opcode == 3 -> PICC RUID/PUPI handling
+				case RUID:					//When opcode == 3 -> PICC RUID/PUPI handling
 					tx_config = 0x03;	//Set TX config to: HEX:1 | CRC:1 | BCC:0
 					if(loop_limit == 1)		// 'loop_limit' is reused for TypeA/B separation, loop_limit = 1: Type A
 					{
@@ -241,7 +241,7 @@ int main()
 					}
 					break;
 /*******************************************************************************************************************************************************************************/
-				case PUPI_SPLIT:				//	When opcode == 4 -> PICC RUID/PUPI handling
+				case PUPI_SPLIT:				//When opcode == 4 -> PICC RUID/PUPI handling
 					//print("\r\npupi_split\r\n");
 					tx_config = 0x03;	//Set TX config to: HEX:1 | CRC:1 | BCC:0
 					if(loop_limit == 1)		// 'loop_limit' is reused for RX/TX separation
@@ -295,7 +295,7 @@ int main()
 					}
 					break;
 /*******************************************************************************************************************************************************************************/
-				case READ_RF: 				//	When opcode == 5 -> read RF and send over UART [DEBUG]
+				case READ_RF: 				//When opcode == 5 -> read RF and send over UART [DEBUG]
 					//Read RF
 					len = read_nfc_rx_stream(rx_buf, &io_module);
 
@@ -306,7 +306,7 @@ int main()
 					#endif
 					break;
 /*******************************************************************************************************************************************************************************/
-				case READ_SEND_RF: 			//	When opcode == 6 -> read RF and send RF [DEBUG]
+				case READ_SEND_RF: 			//When opcode == 6 -> read RF and send RF [DEBUG]
 					tx_config = 0x01;	//Set TX config to: HEX:1 | CRC:0 | BCC:0
 					//Read RF
 					len = read_nfc_rx_stream(rx_buf,&io_module);
@@ -328,7 +328,7 @@ int main()
 					#endif
 					break;
 /*******************************************************************************************************************************************************************************/
-				case SEND_RF:				//	When opcode == 7 -> send RF [DEBUG]
+				case SEND_RF:				//When opcode == 7 -> send RF [DEBUG]
 					tx_config = 0x01;	//Set TX config to: HEX:1 | CRC:0 | BCC:0
 
 					//Send RF
